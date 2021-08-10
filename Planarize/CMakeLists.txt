@@ -43,11 +43,13 @@ if(NOT hasParent)
    set(BUILD_EXAMPLES OFF CACHE BOOL "No examples" FORCE)
    set(GFLAGS OFF CACHE BOOL "No GFLAGS" FORCE)
    set(LIBIGL_WITH_MATLAB OFF CACHE BOOL "NO MATLAB" FORCE)
-   set(EIGENSPARSE OFF CACHE BOOL "NO Eigen sparse (ceres)" FORCE)
    set(SUITESPARSE OFF CACHE BOOL "NO Eigen SuiteSparse (problems on Win)" FORCE)
+   set(CXSPARSE OFF CACHE BOOL "Use CXSPARSE" FORCE)
 
    set(LIBIGL_WITH_CGAL ON CACHE BOOL "Use CGAL" FORCE)
-   set(CXSPARSE ON CACHE BOOL "Use CXSPARSE" FORCE)
+   set(EIGENSPARSE ON CACHE BOOL "NO Eigen sparse (ceres)" FORCE)
+   
+   find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../extern/libigl ${CMAKE_BINARY_DIR}/extern/libigl)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../extern/ceres-solver ${CMAKE_BINARY_DIR}/extern/ceres-solver)
