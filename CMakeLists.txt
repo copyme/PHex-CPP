@@ -34,7 +34,7 @@ endif()
    
 
 set(LIBIGL_USE_STATIC_LIBRARY OFF CACHE BOOL "No static libs" FORCE)
-set(LIBIGL_EXPORT_TARGETS ON CACHE BOOL "No igl targets" FORCE) # exports Eigen, etc.
+set(LIBIGL_EXPORT_TARGETS OFF CACHE BOOL "No igl targets" FORCE) # exports Eigen, etc.
 set(LIBIGL_WITH_EMBREE OFF CACHE BOOL "No embree" FORCE)
 set(LIBIGL_WITH_COMISO OFF CACHE BOOL "No comiso" FORCE)
 set(LIBIGL_WITH_PYTHON OFF CACHE BOOL "No python" FORCE)
@@ -48,12 +48,15 @@ set(LIBIGL_WITH_XML OFF  CACHE BOOL "NO XML" FORCE)
 set(LIBIGL_WITH_PREDICATES OFF  CACHE BOOL "No predicqtes" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "No examples" FORCE)
 set(GFLAGS OFF CACHE BOOL "No GFLAGS" FORCE)
-set(EIGENSPARSE OFF CACHE BOOL "NO Eigen sparse (ceres)" FORCE)
+set(CXSPARSE OFF CACHE BOOL "No CXSPARSE" FORCE)
 set(SUITESPARSE OFF CACHE BOOL "NO Eigen SuiteSparse (problems on Win)" FORCE)
 
 set(LIBIGL_WITH_MATLAB ON CACHE BOOL "NO MATLAB" FORCE)
 set(LIBIGL_WITH_CGAL ON CACHE BOOL "Use CGAL" FORCE)
-set(CXSPARSE ON CACHE BOOL "Use CXSPARSE" FORCE)
+set(MINIGLOG ON CACHE BOOL "Use MINIGLOG" FORCE)
+set(EIGENSPARSE ON CACHE BOOL "NO Eigen sparse (ceres)" FORCE)
+
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/libigl ${CMAKE_BINARY_DIR}/extern/libigl)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/ceres-solver ${CMAKE_BINARY_DIR}/extern/ceres-solver)
@@ -75,7 +78,7 @@ if (CPF_WITH_FAST_MATH)
   set(LIBIGL_FOUND TRUE CACHE BOOL "Skip tests" FORCE)
 
   set(WITH_ELTOPO OFF CACHE BOOL "No ELTOP" FORCE)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/gptoolbox-master/mex/ EXCLUDE_FROM_ALL)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/gptoolbox-master/mex/)
 endif()
 # Workaround to be able to deal with compiler bug "Too many sections" with CYGWIN.
 if( CYGWIN )

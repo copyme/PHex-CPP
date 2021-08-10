@@ -350,7 +350,7 @@ public:
     ceres::Solver::Options options;
     options.minimizer_progress_to_stdout = outputProgress;
     options.max_num_iterations = 250;
-    options.sparse_linear_algebra_library_type = ceres::CX_SPARSE;
+    options.sparse_linear_algebra_library_type = ceres::EIGEN_SPARSE;
     options.linear_solver_type = ceres::SPARSE_NORMAL_CHOLESKY;
     options.num_threads = 4;
 	  options.logging_type = ceres::SILENT;

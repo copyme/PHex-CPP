@@ -70,7 +70,7 @@ void read_per_corner_fuc(const std::string& filename, Eigen::MatrixXd & wholeCor
         lineCounter++;
         std::vector<double> vals;
         while (std::getline(iss, token, ',')) {
-            vals.push_back(std::__cxx11::stod(token));
+            vals.push_back(std::stod(token));
         }
         wholeCornerParamFuncsN.conservativeResize(lineCounter, vals.size());
         for(int i =0; i < vals.size(); i++)
