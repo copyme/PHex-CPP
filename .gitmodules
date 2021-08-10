@@ -1,0 +1,14 @@
+[submodule "extern/directional"]
+	path = extern/directional
+	url = https://github.com/copyme/Directional.git
+	branch = HPrecisionWriteField
+[submodule "extern/libhedra"]
+	path = extern/libhedra
+	url = https://github.com/copyme/libhedra.git
+	branch = numErrNormalDualPrecision
+[submodule "extern/ceres-solver"]
+	path = extern/ceres-solver
+	url = https://ceres-solver.googlesource.com/ceres-solver
+[submodule "extern/libigl"]
+	path = extern/libigl
+	url = https://github.com/copyme/libigl.git
