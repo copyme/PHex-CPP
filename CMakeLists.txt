@@ -89,7 +89,7 @@ set(CPF_DIR "" CACHE PATH "Path to the CPF MATLAB files")
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Dualizer)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Planarize)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Parametrization)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Parameterization)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Mesher)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/MeshCutter)
 
