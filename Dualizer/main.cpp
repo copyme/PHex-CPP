@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
   std::string outputMeshFileName;
   std::string boundaryMode;
 
-  app.description("This program combs a directional field defined on a triangular mesh.");
+  app.description("Program for computing a dual mesh.");
 
   //add all the options supported.
   app.add_option("-i,--input, 1", inputMeshFileName, "The path to the OFF file containing the input mesh.")->required()->check(CLI::ExistingFile);
