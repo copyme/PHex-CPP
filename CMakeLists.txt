@@ -131,8 +131,8 @@ if (EXISTS ${CPF_DIR})
             ${CPF_DIR}/external/Mesher/Mesher_bin
 
             COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/Parametrization/Parametrization_bin
-            ${CPF_DIR}/external/Parametrization/Parametrization_bin
+            ${CMAKE_CURRENT_BINARY_DIR}/Parameterization/Parameterization_bin
+            ${CPF_DIR}/external/Parameterization/Parameterization_bin
 
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_BINARY_DIR}/Dualizer/Dualizer_bin
