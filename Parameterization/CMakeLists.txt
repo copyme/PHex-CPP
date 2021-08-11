@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(Parametrization)
+project(Parameterization)
 
 get_directory_property(hasParent PARENT_DIRECTORY)
 
