@@ -114,7 +114,7 @@ if (EXISTS ${CPF_DIR})
 
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_BINARY_DIR}/Planarize/Planarize_bin.exe
-            ${CPF_DIR}/external/Planarize/Planarize_bin.exe
+            ${CPF_DIR}/external/Planarizer/Planarize_bin.exe
 
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/extern/gptoolbox-master/mex/fast_sparse.mexw64
@@ -140,7 +140,7 @@ if (EXISTS ${CPF_DIR})
 
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_BINARY_DIR}/Planarize/Planarize_bin
-            ${CPF_DIR}/external/Planarize/Planarize_bin
+            ${CPF_DIR}/external/Planarizer/Planarize_bin
 
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/extern/gptoolbox-master/mex/fast_sparse.mexa64
