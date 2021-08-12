@@ -281,7 +281,7 @@ int main(int argc, char* argv[])
 
   if(!outputSHMeshFileName.empty())
   {
-      if (!hedra::polygonal_write_OFF(std::string(argv[4]), genV, genD, genF))
+      if (!hedra::polygonal_write_OFF(outputSHMeshFileName, genV, genD, genF))
       {
           std::cout << "The output mesh file could not be written!" << std::endl;
           exit(0);
