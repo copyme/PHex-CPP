@@ -255,7 +255,7 @@ int main(int argc, char* argv[])
 
   if(!outputNHMeshFileName.empty())
   {
-      if (!hedra::polygonal_write_OFF(std::string(argv[3]), genV, genD, genF, true))
+      if (!hedra::polygonal_write_OFF(outputNHMeshFileName, genV, genD, genF, true))
       {
           std::cout << "The output for non-simplified mesh file could not be written!" << std::endl;
           exit(0);
