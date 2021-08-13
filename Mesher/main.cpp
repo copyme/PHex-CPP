@@ -187,7 +187,7 @@ int main(int argc, char* argv[])
   app.add_option("-c,--input_cutmesh, 2", inputCutMeshFileName, "The path to the OFF file containing the input cut mesh.")->required()->check(CLI::ExistingFile);
   app.add_option("-u,--input_serialized_pd, 3", inputSerializedPDFileName, "The path to the serialized parametrization data.")->required()->check(CLI::ExistingFile);
   app.add_option("-p,--input_per_cor_func, 4", inputPerCornerFFileName, "Input per corner functions.")->required()->check(CLI::ExistingFile);
-  app.add_option("-C,--input_comp_func, 5", inputCompactFFFileName, "Input per corner functions.")->required()->check(CLI::ExistingFile);
+  app.add_option("-C,--input_comp_func, 5", inputCompactFFFileName, "Input compact functions.")->required()->check(CLI::ExistingFile);
 
   app.add_option("-n,--output_nsmesh, 6", outputNHMeshFileName, "The path to the output non-simplified output mesh.");
   app.add_option("-o,--output_smesh, 7", outputSHMeshFileName, "The path to the output simplified mesh.");

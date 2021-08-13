@@ -353,7 +353,7 @@ public:
     options.sparse_linear_algebra_library_type = ceres::EIGEN_SPARSE;
     options.linear_solver_type = ceres::SPARSE_NORMAL_CHOLESKY;
     options.num_threads = 4;
-	  options.logging_type = ceres::SILENT;
+    options.logging_type = ceres::SILENT;
 
     ceres::Solver::Summary summary;
     ceres::Solve(options, problem, &summary);
