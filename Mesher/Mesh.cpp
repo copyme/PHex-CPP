@@ -17,8 +17,6 @@
 #include "Definitions.h"
 #include "Mesh.h"
 
-using namespace std;
-
 typedef CGAL::Arr_linear_traits_2<EKernel>                    Traits_2;
 typedef Traits_2::Point_2                                     Point_2;
 typedef Traits_2::Segment_2                                   Segment_2;
@@ -45,7 +43,7 @@ void Mesh::GenerateMesh(const int numParamFuncs, Mesh& HexMesh)
   HexMesh.Faces.clear();
   
   //resolution is set to 10e-6 of bounding box of mesh
-  vector<Point3D> coordList;
+  std::vector<Point3D> coordList;
   for (auto & Vertice : Vertices)
     coordList.push_back(Vertice.Coordinates);
   
@@ -53,7 +51,6 @@ void Mesh::GenerateMesh(const int numParamFuncs, Mesh& HexMesh)
 
   double Resolution=1e8;
 
-  std::cout << "Face loop" << std::endl;
   for (auto & findex : Faces){
     
     //building small face overlays of one triangle and a few roughly surrounding hexes to retrieve the structure in the face
@@ -61,10 +58,10 @@ void Mesh::GenerateMesh(const int numParamFuncs, Mesh& HexMesh)
     int ebegin=findex.AdjHalfedge;
     int eiterate=ebegin;
 
-    vector<vector<ENumber> > funcValues(3);
+    std::vector<std::vector<ENumber> > funcValues(3);
     
-    vector<ENumber> minFuncs(numParamFuncs);
-    vector<ENumber> maxFuncs(numParamFuncs);
+    std::vector<ENumber> minFuncs(numParamFuncs);
+    std::vector<ENumber> maxFuncs(numParamFuncs);
     for (int k=0;k<numParamFuncs;k++){
       minFuncs[k]=ENumber(327600);
       maxFuncs[k]=ENumber(-327600);
@@ -86,9 +83,9 @@ void Mesh::GenerateMesh(const int numParamFuncs, Mesh& HexMesh)
     //building the one-triangle arrangement
     ebegin=findex.AdjHalfedge;
     eiterate=ebegin;
-    vector<EPoint2D> ETriPoints2D;
-    vector<EPoint3D> ETriPoints3D;
-    vector<EdgeData> EdgeDatas;
+    std::vector<EPoint2D> ETriPoints2D;
+    std::vector<EPoint3D> ETriPoints3D;
+    std::vector<EdgeData> EdgeDatas;
     ETriPoints2D.emplace_back(0,0);
     ETriPoints2D.emplace_back(1,0);
     ETriPoints2D.emplace_back(0,1);
@@ -131,12 +128,12 @@ void Mesh::GenerateMesh(const int numParamFuncs, Mesh& HexMesh)
     }
     
     //creating the primal arrangement of lines
-    vector<ELine2D> paramLines;
-    vector<EDirection2D> isoDirections(numParamFuncs);
+    std::vector<ELine2D> paramLines;
+    std::vector<EDirection2D> isoDirections(numParamFuncs);
     int jumps = (numParamFuncs%2==0 ? 2 : 1);
     for (int funcIter=0;funcIter<numParamFuncs/jumps;funcIter++){
       
-      vector<EInt> isoValues;
+      std::vector<EInt> isoValues;
       EInt q,r;
       CGAL::div_mod(minFuncs[funcIter].numerator(), minFuncs[funcIter].denominator(), q, r);
       EInt minIsoValue = q + (r<0 ? -1 : 0);
@@ -359,29 +356,29 @@ struct PointPair{
   }
 };
 
-vector<pair<int,int>> FindVertexMatch(ostream& DebugLog, vector<EPoint3D>& Set1, vector<EPoint3D>& Set2)
+std::vector<std::pair<int,int>> FindVertexMatch(std::ostream& DebugLog, std::vector<EPoint3D>& Set1, std::vector<EPoint3D>& Set2)
 {
-  set<PointPair> PairSet;
+  std::set<PointPair> PairSet;
   for (int i=0;i<Set1.size();i++)
     for (int j=0;j<Set2.size();j++)
       PairSet.insert(PointPair(i,j,squared_distance(Set1[i],Set2[j])));
   
   DebugLog<<"Matching set ";
   for (auto & i : Set1)
-    DebugLog<<i.x().to_double()<<" "<<i.y().to_double()<<" "<<i.z().to_double()<<", "<<endl;
+    DebugLog<<i.x().to_double()<<" "<<i.y().to_double()<<" "<<i.z().to_double()<<", "<<std::endl;
   
-  DebugLog<<"to set" <<endl;
+  DebugLog<<"to set" << std::endl;
   for (auto & i : Set2)
-    DebugLog<<i.x().to_double()<<" "<<i.y().to_double()<<" "<<i.z().to_double()<<", "<<endl;
+    DebugLog<<i.x().to_double()<<" "<<i.y().to_double()<<" "<<i.z().to_double()<<", "<<std::endl;
   
   if (Set1.size()!=Set2.size())  //should not happen anymore
-    DebugLog<<"The two sets are of different sizes!! "<<endl;
+    DebugLog<<"The two sets are of different sizes!! "<<std::endl;
   
   //adding greedily legal connections until graph is full
-  vector<bool> Set1Connect(Set1.size());
-  vector<bool> Set2Connect(Set2.size());
+  std::vector<bool> Set1Connect(Set1.size());
+  std::vector<bool> Set2Connect(Set2.size());
   
-  vector<pair<int, int> > Result;
+  std::vector<std::pair<int, int> > Result;
   
   for (int i=0;i<Set1.size();i++)
     Set1Connect[i]=false;
@@ -422,17 +419,17 @@ vector<pair<int,int>> FindVertexMatch(ostream& DebugLog, vector<EPoint3D>& Set1,
   
   for (int i=0;i<Set1.size();i++)
     if (!Set1Connect[i])
-      DebugLog<<"Relative Vertex "<<i<<" in Set1 is unmatched!"<<endl;
+      DebugLog<<"Relative Vertex "<<i<<" in Set1 is unmatched!"<<std::endl;
   
   for (int i=0;i<Set2.size();i++)
     if (!Set2Connect[i])
-      DebugLog<<"Relative Vertex "<<i<<" in Set2 is unmatched!"<<endl;
+      DebugLog<<"Relative Vertex "<<i<<" in Set2 is unmatched!"<<std::endl;
 
   DebugLog<<"matching points are ";
   for (auto & i : Result){
-    DebugLog<<"("<<i.first<<","<<i.second<<") with dist "<<squared_distance(Set1[i.first],Set2[i.second])<<endl;
+    DebugLog<<"("<<i.first<<","<<i.second<<") with dist "<<squared_distance(Set1[i.first],Set2[i.second])<<std::endl;
     if (squared_distance(Set1[i.first],Set2[i.second])>0)
-      DebugLog<<"Distance is abnormally not zero!"<<endl;
+      DebugLog<<"Distance is abnormally not zero!"<<std::endl;
   }
 
   return Result;
@@ -502,10 +499,10 @@ void Mesh::UnifyEdges(int heindex)
 
 void Mesh::CleanMesh()
 {
-  DebugLog<<"Cleaning mesh (removing invalid components"<<endl;
+  DebugLog<<"Cleaning mesh (removing invalid components"<<std::endl;
   //removing nonvalid vertices
-  vector<int> TransVertices(Vertices.size());
-  vector<Vertex> NewVertices;
+  std::vector<int> TransVertices(Vertices.size());
+  std::vector<Vertex> NewVertices;
   for (int i=0;i<Vertices.size();i++){
     if (!Vertices[i].Valid)
       continue;
@@ -516,17 +513,17 @@ void Mesh::CleanMesh()
     TransVertices[i]=NewVertex.ID;
   }
   
-   DebugLog<<"ok here 1"<<endl;
+   DebugLog<<"ok here 1"<<std::endl;
   
   Vertices=NewVertices;
   for (auto & Halfedge : Halfedges)
     Halfedge.Origin=TransVertices[Halfedge.Origin];
   
-  DebugLog<<"ok here 2"<<endl;
+  DebugLog<<"ok here 2"<<std::endl;
 
   //removing nonvalid faces
-  vector<Face> NewFaces;
-  vector<int> TransFaces(Faces.size());
+  std::vector<Face> NewFaces;
+  std::vector<int> TransFaces(Faces.size());
   for (int i=0;i<Faces.size();i++){
     if (!Faces[i].Valid)
       continue;
@@ -540,33 +537,34 @@ void Mesh::CleanMesh()
   for (auto & Halfedge : Halfedges)
     Halfedge.AdjFace=TransFaces[Halfedge.AdjFace];
   
-   DebugLog<<"ok here 4"<<endl;
+   DebugLog<<"ok here 4"<<std::endl;
   
   //removing nonvalid halfedges
-  vector<Halfedge> NewHalfedges;
-  vector<int> TransHalfedges(Halfedges.size());
-  for (int i=0;i<Halfedges.size();i++){
-    if (!Halfedges[i].Valid)
-      continue;
-    
-    Halfedge NewHalfedge=Halfedges[i];
-    NewHalfedge.ID=NewHalfedges.size();
-    NewHalfedges.push_back(NewHalfedge);
-    TransHalfedges[i]=NewHalfedge.ID;
+  std::vector<Halfedge> NewHalfedges;
+  std::vector<int> TransHalfedges(Halfedges.size());
+  for (int i=0;i<Halfedges.size();i++)
+  {
+      if (!Halfedges[i].Valid)
+          continue;
+
+      Halfedge NewHalfedge=Halfedges[i];
+      NewHalfedge.ID=NewHalfedges.size();
+      NewHalfedges.push_back(NewHalfedge);
+      TransHalfedges[i]=NewHalfedge.ID;
   }
   
-   DebugLog<<"ok here 5"<<endl;
+   DebugLog<<"ok here 5"<<std::endl;
   
   Halfedges=NewHalfedges;
   for (auto & Face : Faces)
     Face.AdjHalfedge=TransHalfedges[Face.AdjHalfedge];
   
-   DebugLog<<"ok here 6"<<endl;
+   DebugLog<<"ok here 6"<<std::endl;
   
   for (auto & Vertice : Vertices)
     Vertice.AdjHalfedge=TransHalfedges[Vertice.AdjHalfedge];
   
-   DebugLog<<"ok here 7"<<endl;
+   DebugLog<<"ok here 7"<<std::endl;
   
   for (auto & Halfedge : Halfedges){
     if (Halfedge.Twin!=-1)
@@ -584,18 +582,18 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
       continue;
     
     if (Vertices[i].AdjHalfedge==-1){
-      DebugLog<<"Valid Vertex "<<i<<" points to non-valid value -1 "<<endl;
+      DebugLog<<"Valid Vertex "<<i<<" points to non-valid value -1 "<<std::endl;
       return false;
     }
     
     if (!Halfedges[Vertices[i].AdjHalfedge].Valid){
-      DebugLog<<"Valid Vertex "<<i<<" points to non-valid AdjHalfedge "<<Vertices[i].AdjHalfedge<<endl;
+      DebugLog<<"Valid Vertex "<<i<<" points to non-valid AdjHalfedge "<<Vertices[i].AdjHalfedge<<std::endl;
       return false;
     }
     
     
     if (Halfedges[Vertices[i].AdjHalfedge].Origin!=i){
-      DebugLog<<"Adjacent Halfedge "<<Vertices[i].AdjHalfedge<<" of vertex "<<i<<"does not point back"<<endl;
+      DebugLog<<"Adjacent Halfedge "<<Vertices[i].AdjHalfedge<<" of vertex "<<i<<"does not point back"<<std::endl;
       return false;
     }
     
@@ -607,90 +605,90 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
     
     
     if (Halfedges[i].Next==-1){
-      DebugLog<<"Valid Halfedge "<<i<<"points to Next non-valid value -1"<<endl;
+      DebugLog<<"Valid Halfedge "<<i<<"points to Next non-valid value -1"<<std::endl;
       return false;
     }
     
     if (Halfedges[i].Prev==-1){
-      DebugLog<<"Valid Halfedge "<<i<<"points to Prev non-valid value -1"<<endl;
+        DebugLog<<"Valid Halfedge "<<i<<"points to Prev non-valid value -1"<<std::endl;
       return false;
     }
     
     
     if (Halfedges[i].Origin==-1){
-      DebugLog<<"Valid Halfedge "<<i<<"points to Origin non-valid value -1"<<endl;
+        DebugLog<<"Valid Halfedge "<<i<<"points to Origin non-valid value -1"<<std::endl;
       return false;
     }
     
     if (Halfedges[i].AdjFace==-1){
-      DebugLog<<"Valid Halfedge "<<i<<"points to AdjFace non-valid value -1"<<endl;
+        DebugLog<<"Valid Halfedge "<<i<<"points to AdjFace non-valid value -1"<<std::endl;
       return false;
     }
     
     if (Halfedges[Halfedges[i].Next].Prev!=i){
-      DebugLog<<"Halfedge "<<i<<"Next is "<<Halfedges[i].Next<<" which doesn't point back as Prev"<<endl;
+        DebugLog<<"Halfedge "<<i<<"Next is "<<Halfedges[i].Next<<" which doesn't point back as Prev"<<std::endl;
       return false;
     }
     
     
     if (Halfedges[Halfedges[i].Prev].Next!=i){
-      DebugLog<<"Halfedge "<<i<<"Prev is "<<Halfedges[i].Prev<<" which doesn't point back as Next"<<endl;
+        DebugLog<<"Halfedge "<<i<<"Prev is "<<Halfedges[i].Prev<<" which doesn't point back as Next"<<std::endl;
       return false;
     }
     
     if (!Vertices[Halfedges[i].Origin].Valid){
-      DebugLog<<"The Origin of halfedges "<<i<<", vertex "<<Halfedges[i].Origin<<" is not valid"<<endl;
+        DebugLog<<"The Origin of halfedges "<<i<<", vertex "<<Halfedges[i].Origin<<" is not valid"<<std::endl;
       return false;
     }
     
     if (!Faces[Halfedges[i].AdjFace].Valid){
-      DebugLog<<"The face of halfedges "<<i<<", face "<<Halfedges[i].AdjFace<<" is not valid"<<endl;
+        DebugLog<<"The face of halfedges "<<i<<", face "<<Halfedges[i].AdjFace<<" is not valid"<<std::endl;
       return false;
     }
     
     if (Halfedges[Halfedges[i].Next].Origin==Halfedges[i].Origin){  //a degenerate edge{
-      DebugLog<<"Halfedge "<<i<<" with twin"<<Halfedges[i].Twin<<" is degenerate with vertex "<<Halfedges[i].Origin<<endl;
+        DebugLog<<"Halfedge "<<i<<" with twin"<<Halfedges[i].Twin<<" is degenerate with vertex "<<Halfedges[i].Origin<<std::endl;
       return false;
     }
     
     if (Halfedges[i].Twin>=0){
       if (Halfedges[Halfedges[i].Twin].Twin!=i){
-        DebugLog<<"Halfedge "<<i<<"twin is "<<Halfedges[i].Twin<<" which doesn't point back"<<endl;
+          DebugLog<<"Halfedge "<<i<<"twin is "<<Halfedges[i].Twin<<" which doesn't point back"<<std::endl;
         return false;
       }
       
       if (!Halfedges[Halfedges[i].Twin].Valid){
-        DebugLog<<"halfedge "<<i<<" is twin with invalid halfedge"<<Halfedges[i].Twin<<endl;
+          DebugLog<<"halfedge "<<i<<" is twin with invalid halfedge"<<Halfedges[i].Twin<<std::endl;
         return false;
       }
     }
     
     if (!Halfedges[Halfedges[i].Next].Valid){
-      DebugLog<<"halfedge "<<i<<" has next invalid halfedge"<<Halfedges[i].Next<<endl;
+        DebugLog<<"halfedge "<<i<<" has next invalid halfedge"<<Halfedges[i].Next<<std::endl;
       return false;
     }
     
     if (!Halfedges[Halfedges[i].Prev].Valid){
-      DebugLog<<"halfedge "<<i<<" has prev invalid halfedge"<<Halfedges[i].Prev<<endl;
+        DebugLog<<"halfedge "<<i<<" has prev invalid halfedge"<<Halfedges[i].Prev<<std::endl;
       return false;
     }
     
     if (Halfedges[i].isHex){  //checking that it is not left alone
       if (Halfedges[i].Prev==Halfedges[i].Twin){
-        DebugLog<<"Hex halfedge "<<i<<" has Halfedge "<<Halfedges[i].Prev<<" and both prev and twin"<<endl;
+          DebugLog<<"Hex halfedge "<<i<<" has Halfedge "<<Halfedges[i].Prev<<" and both prev and twin"<<std::endl;
         return false;
       }
       
       
       if (Halfedges[i].Next==Halfedges[i].Twin){
-        DebugLog<<"Hex halfedge "<<i<<" has Halfedge "<<Halfedges[i].Next<<" and both next and twin"<<endl;
+          DebugLog<<"Hex halfedge "<<i<<" has Halfedge "<<Halfedges[i].Next<<" and both next and twin"<<std::endl;
         return false;
       }
     }
   }
   
-  vector<set<int>> halfedgesinFace(Faces.size());
-  vector<set<int>> verticesinFace(Faces.size());
+  std::vector<std::set<int>> halfedgesinFace(Faces.size());
+  std::vector<std::set<int>> verticesinFace(Faces.size());
   for (int i=0;i<Faces.size();i++){
     if (!Faces[i].Valid)
       continue;
@@ -701,7 +699,7 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
     
     do{
       if (verticesinFace[i].find(Halfedges[heiterate].Origin)!=verticesinFace[i].end())
-        DebugLog<<"Warning: Vertex "<<Halfedges[heiterate].Origin<<" appears more than once in face "<<i<<endl;
+          DebugLog<<"Warning: Vertex "<<Halfedges[heiterate].Origin<<" appears more than once in face "<<i<<std::endl;
       
       verticesinFace[i].insert(Halfedges[heiterate].Origin);
       halfedgesinFace[i].insert(heiterate);
@@ -710,14 +708,14 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
         return false;
       
       if (Halfedges[heiterate].AdjFace!=i){
-        DebugLog<<"Face "<<i<<" has halfedge "<<heiterate<<" that does not point back"<<endl;
+          DebugLog<<"Face "<<i<<" has halfedge "<<heiterate<<" that does not point back"<<std::endl;
         return false;
       }
     
       heiterate=Halfedges[heiterate].Next;
       NumEdges++;
       if (NumEdges>Halfedges.size()){
-        DebugLog<<"Infinity loop!"<<endl;
+          DebugLog<<"Infinity loop!"<<std::endl;
         return false;
       }
        
@@ -731,7 +729,7 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
       continue;
     int currFace = Halfedges[i].AdjFace;
     if (halfedgesinFace[currFace].find(i)==halfedgesinFace[currFace].end()){
-      DebugLog<<"Halfedge "<<i<<" is floating in face "<<currFace<<endl;
+        DebugLog<<"Halfedge "<<i<<" is floating in face "<<currFace<<std::endl;
       return false;
     }
   }
@@ -744,8 +742,8 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
         continue;
       auto HESetIterator=HESet.find(TwinFinder(i, Halfedges[i].Origin, Halfedges[Halfedges[i].Next].Origin));
       if (HESetIterator!=HESet.end()){
-        DebugLog<<"Warning: the halfedge ("<<Halfedges[i].Origin<<","<<Halfedges[Halfedges[i].Next].Origin<<") appears at least twice in the mesh"<<endl;
-        DebugLog<<"for instance halfedges "<<i<<" and "<<HESetIterator->index<<endl;
+          DebugLog<<"Warning: the halfedge ("<<Halfedges[i].Origin<<","<<Halfedges[Halfedges[i].Next].Origin<<") appears at least twice in the mesh"<<std::endl;
+          DebugLog<<"for instance halfedges "<<i<<" and "<<HESetIterator->index<<std::endl;
         return false;
         //return false;
       }else{
@@ -771,11 +769,11 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
       if (HESetIterator!=HESet.end()){
         
         if (Halfedges[i].Twin==-1){
-          DebugLog<<"Halfedge "<<i<<"has no twin although halfedge "<<HESetIterator->index<<" can be a twin"<<endl;
+            DebugLog<<"Halfedge "<<i<<"has no twin although halfedge "<<HESetIterator->index<<" can be a twin"<<std::endl;
           return false;
         }
         if (Halfedges[HESetIterator->index].Twin==-1){
-          DebugLog<<"Halfedge "<<HESetIterator->index<<"has no twin although halfedge "<<i<<" can be a twin"<<endl;
+            DebugLog<<"Halfedge "<<HESetIterator->index<<"has no twin although halfedge "<<i<<" can be a twin"<<std::endl;
           return false;
         }
       }
@@ -788,7 +786,7 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
      if (!Halfedges[i].Valid)
        continue;
      if ((Halfedges[i].Twin<0)&&(Halfedges[i].isHex))
-       DebugLog<<"WARNING: Halfedge "<<i<<" is a hex edge without twin!"<<endl;
+         DebugLog<<"WARNING: Halfedge "<<i<<" is a hex edge without twin!"<<std::endl;
      
      if (Halfedges[i].Twin>0)
        continue;
@@ -804,13 +802,13 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
        heiterate = Halfedges[heiterate].Next;
      }while (heiterate!=hebegin);
      if (pureBoundary){
-       DebugLog<<"Face "<<Halfedges[i].AdjFace<<"is a pure boundary face!"<<endl;
+         DebugLog<<"Face "<<Halfedges[i].AdjFace<<"is a pure boundary face!"<<std::endl;
        return false;
      }
    }
      
     //checking for latent valence 2 faces
-    vector<int> Valences(Vertices.size());
+    std::vector<int> Valences(Vertices.size());
     for (int i=0;i<Vertices.size();i++)
       Valences[i]=0;
     
@@ -836,22 +834,22 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
         heiterate=Halfedges[heiterate].Next;
         numEdges++;
         if (numEdges>Halfedges.size()){
-          DebugLog<<"Infinity loop in face "<<i<<"!"<<endl;
+            DebugLog<<"Infinity loop in face "<<i<<"!"<<std::endl;
           return false;
         }
       }while (heiterate!=hebegin);
       if (countThree<3){
-        DebugLog<<"Face "<<i<<" is a latent valence 2 face!"<<endl;
-        DebugLog<<"Its vertices are "<<endl;
+          DebugLog<<"Face "<<i<<" is a latent valence 2 face!"<<std::endl;
+          DebugLog<<"Its vertices are "<<std::endl;
         do{
-          DebugLog<<"Vertex "<<Halfedges[heiterate].Origin<<" halfedge "<<heiterate<<" valence "<<Valences[Halfedges[heiterate].Origin]<<endl;
+            DebugLog<<"Vertex "<<Halfedges[heiterate].Origin<<" halfedge "<<heiterate<<" valence "<<Valences[Halfedges[heiterate].Origin]<<std::endl;
           
           if (Valences[Halfedges[heiterate].Origin]>2)
             countThree++;
           heiterate=Halfedges[heiterate].Next;
           numEdges++;
           if (numEdges>Halfedges.size()){
-            DebugLog<<"Infinity loop in face "<<i<<"!"<<endl;
+              DebugLog<<"Infinity loop in face "<<i<<"!"<<std::endl;
             return false;
           }
         }while (heiterate!=hebegin);
@@ -859,7 +857,7 @@ bool Mesh::CheckMesh(bool checkHalfedgeRepetition, bool CheckTwinGaps, bool chec
     }
   }
   
-  DebugLog<<"Mesh is clear according to given checks"<<endl;
+  DebugLog<<"Mesh is clear according to given checks"<<std::endl;
   return true;  //most likely the mesh is solid
 }
 
@@ -888,7 +886,7 @@ bool Mesh::SimplifyHexMesh(int N)
   for (auto & Halfedge : Halfedges)
     MaxOrigHE=std::max(MaxOrigHE, Halfedge.OrigHalfedge);
   
-  vector<bool> visitedOrig(MaxOrigHE+1);
+  std::vector<bool> visitedOrig(MaxOrigHE+1);
   for (int i=0;i<MaxOrigHE+1;i++) visitedOrig[i]=false;
   for (int i=0;i<Halfedges.size();i++){
     if (Halfedges[i].OrigHalfedge<0)
@@ -898,18 +896,18 @@ bool Mesh::SimplifyHexMesh(int N)
     
     int hebegin = i;
     int heiterate = hebegin;
-    DebugLog<<"Walking original triangle boundary"<<endl;
+    DebugLog<<"Walking original triangle boundary"<<std::endl;
     do{
       visitedOrig[Halfedges[heiterate].OrigHalfedge]=true;
-      DebugLog<<"Walking boundary halfedge "<<heiterate<<" with vertex "<<Halfedges[heiterate].Origin<<" on original halfedge "<<Halfedges[heiterate].OrigHalfedge<<endl;
+      DebugLog<<"Walking boundary halfedge "<<heiterate<<" with vertex "<<Halfedges[heiterate].Origin<<" on original halfedge "<<Halfedges[heiterate].OrigHalfedge<<std::endl;
       WalkBoundary(heiterate);
     }while (heiterate!=hebegin);
     
   }
   
-  vector< vector<int> > BoundEdgeCollect1(MaxOrigHE+1);
-  vector< vector<int> > BoundEdgeCollect2(MaxOrigHE+1);
-  vector<bool> Marked(Halfedges.size());
+  std::vector< std::vector<int> > BoundEdgeCollect1(MaxOrigHE+1);
+  std::vector< std::vector<int> > BoundEdgeCollect2(MaxOrigHE+1);
+  std::vector<bool> Marked(Halfedges.size());
   for (int i=0;i<Halfedges.size();i++) Marked[i]=false;
   //finding out vertex correspondence along twin edges of the original mesh by walking on boundaries
   for (int i=0;i<Halfedges.size();i++){
@@ -926,7 +924,7 @@ bool Mesh::SimplifyHexMesh(int N)
     
     //filling out strips of boundary with the respective attached original halfedges
     int BeginEdge=CurrEdge;
-    vector<pair<int,int> > CurrEdgeCollect;
+    std::vector<std::pair<int,int> > CurrEdgeCollect;
     do{
       CurrEdgeCollect.emplace_back(Halfedges[CurrEdge].OrigHalfedge, CurrEdge);
       Marked[CurrEdge]=true;
@@ -948,7 +946,7 @@ bool Mesh::SimplifyHexMesh(int N)
   }
   
   //editing the edges into two vector lists per associated original edge
-  vector< vector<int> > VertexSets1(MaxOrigHE+1), VertexSets2(MaxOrigHE+1);
+  std::vector< std::vector<int> > VertexSets1(MaxOrigHE+1), VertexSets2(MaxOrigHE+1);
   for (int i=0;i<MaxOrigHE+1;i++){
     for (int j=0;j<BoundEdgeCollect1[i].size();j++)
       VertexSets1[i].push_back(Halfedges[BoundEdgeCollect1[i][j]].Origin);
@@ -966,24 +964,24 @@ bool Mesh::SimplifyHexMesh(int N)
   }
   
   //finding out vertex matches
-  vector<pair<int, int> > VertexMatches;
+  std::vector<std::pair<int, int> > VertexMatches;
   for (int i=0;i<MaxOrigHE+1;i++){
-    vector<EPoint3D> PointSet1(VertexSets1[i].size());
-    vector<EPoint3D> PointSet2(VertexSets2[i].size());
+    std::vector<EPoint3D> PointSet1(VertexSets1[i].size());
+    std::vector<EPoint3D> PointSet2(VertexSets2[i].size());
     for (int j=0;j<PointSet1.size();j++)
       PointSet1[j]=Vertices[VertexSets1[i][j]].ECoordinates;
     
     for (int j=0;j<PointSet2.size();j++)
       PointSet2[j]=Vertices[VertexSets2[i][j]].ECoordinates;
     
-    vector<pair<int, int> > CurrMatches;
+    std::vector<std::pair<int, int> > CurrMatches;
     if ((!PointSet1.empty())&&(!PointSet2.empty()))
       CurrMatches=FindVertexMatch(DebugLog, PointSet1, PointSet2);
     
     for (auto & CurrMatche : CurrMatches){
       CurrMatche.first =VertexSets1[i][CurrMatche.first];
       CurrMatche.second=VertexSets2[i][CurrMatche.second];
-      DebugLog<<"Vertex "<<CurrMatche.first<<" is matched with vertex "<<CurrMatche.second<<endl;
+      DebugLog<<"Vertex "<<CurrMatche.first<<" is matched with vertex "<<CurrMatche.second<<std::endl;
     }
     
     VertexMatches.insert(VertexMatches.end(), CurrMatches.begin(), CurrMatches.end() );
@@ -1000,7 +998,7 @@ bool Mesh::SimplifyHexMesh(int N)
   for (auto & VertexMatche : VertexMatches)
     MaxDist=std::max(MaxDist, (Vertices[VertexMatche.first].Coordinates-Vertices[VertexMatche.second].Coordinates).squared_length());
   
-  cout<<"Max matching distance: "<<MaxDist<<endl;
+  std::cout<<"Max matching distance: "<<MaxDist<<std::endl;
   
   TransVertices.resize(Vertices.size());
   int NumNewVertices = connected_components(MatchGraph, &TransVertices[0]);
@@ -1009,7 +1007,7 @@ bool Mesh::SimplifyHexMesh(int N)
     for (int j=0;j<TransVertices.size();j++)
       if (TransVertices[j]==i)
         DebugLog<<j<<", ";
-    DebugLog<<endl;
+      DebugLog<<std::endl;
   }
   
   for (int i=0;i<Faces.size();i++){
@@ -1020,7 +1018,7 @@ bool Mesh::SimplifyHexMesh(int N)
       DebugLog<<heiterate<<"["<<Halfedges[heiterate].Origin<<"], ";
       heiterate = Halfedges[heiterate].Next;
     }while (heiterate!=hebegin);
-    DebugLog<<endl;
+    DebugLog<<std::endl;
   }
   
   for (int i=0;i<Halfedges.size();i++){
@@ -1040,11 +1038,11 @@ bool Mesh::SimplifyHexMesh(int N)
   if (!CheckMesh(false, false, false))
     return false;
   
-  vector<bool> transClaimed(NumNewVertices);
+  std::vector<bool> transClaimed(NumNewVertices);
   for (int i=0;i<NumNewVertices;i++)
     transClaimed[i]=false;
   //unifying all vertices into the TransVertices
-  vector<Vertex> NewVertices(NumNewVertices);
+  std::vector<Vertex> NewVertices(NumNewVertices);
   for (int i=0;i<Vertices.size();i++){  //redundant, but not terrible
     if (!Vertices[i].Valid)
       continue;
@@ -1056,12 +1054,12 @@ bool Mesh::SimplifyHexMesh(int N)
   
   for (int i=0;i<NumNewVertices;i++)
     if (!transClaimed[i]){
-      DebugLog<<"TransVertex "<<i<<" not claimed!"<<endl;
+        DebugLog<<"TransVertex "<<i<<" not claimed!"<<std::endl;
       DebugLog<<"Group of vertices: ";
       for (int j=0;j<TransVertices.size();j++)
         if (TransVertices[j]==i)
           DebugLog<<j<<", ";
-      DebugLog<<endl;
+        DebugLog<<std::endl;
       NewVertices[i].Valid=false;  //this vertex is dead to begin with
     }
   
@@ -1078,7 +1076,7 @@ bool Mesh::SimplifyHexMesh(int N)
     return false;
   
   //twinning up edges
-  set<TwinFinder> Twinning;
+  std::set<TwinFinder> Twinning;
   for (int i=0;i<Halfedges.size();i++){
     if ((Halfedges[i].Twin>=0)||(!Halfedges[i].Valid))
       continue;
@@ -1087,9 +1085,9 @@ bool Mesh::SimplifyHexMesh(int N)
     if (Twinit!=Twinning.end()){
       DebugLog<<"Twinning halfedge "<<i<<" and halfedge "<<Twinit->index<<"\n";
       if (Halfedges[Twinit->index].Twin!=-1)
-        DebugLog<<"warning: halfedge "<<Twinit->index<<" is already twinned to halfedge "<<Halfedges[Twinit->index].Twin<<endl;
+          DebugLog<<"warning: halfedge "<<Twinit->index<<" is already twinned to halfedge "<<Halfedges[Twinit->index].Twin<<std::endl;
       if (Halfedges[i].Twin!=-1)
-        DebugLog<<"warning: halfedge "<<i<<" is already twinned to halfedge "<<Halfedges[Twinit->index].Twin<<endl;
+          DebugLog<<"warning: halfedge "<<i<<" is already twinned to halfedge "<<Halfedges[Twinit->index].Twin<<std::endl;
       Halfedges[Twinit->index].Twin=i;
       Halfedges[i].Twin=Twinit->index;
       
@@ -1109,7 +1107,7 @@ bool Mesh::SimplifyHexMesh(int N)
   //check if there are any non-twinned edge which shouldn't be in a closed mesh
   for (int i=0;i<Halfedges.size();i++){
     if (Halfedges[i].Twin==-1)
-      DebugLog<<"Halfedge "<<i<<" does not have a twin!"<<endl;
+        DebugLog<<"Halfedge "<<i<<" does not have a twin!"<<std::endl;
   }
   
 
@@ -1157,12 +1155,12 @@ bool Mesh::SimplifyHexMesh(int N)
   }
   
   //realigning halfedges in hex vertices to only follow other hex edges
-  DebugLog<<"Realigning edges around vertices"<<endl;
+  DebugLog<<"Realigning edges around vertices"<<std::endl;
   for (int i=0;i<Vertices.size();i++){
     if ((isPureTriangle[i])||(!Vertices[i].Valid))
       continue;
     
-    vector<int> hexHEorder;
+    std::vector<int> hexHEorder;
     int hebegin = Vertices[i].AdjHalfedge;
     if (isBoundary[i]){
       //finding the first hex halfedge
@@ -1196,7 +1194,7 @@ bool Mesh::SimplifyHexMesh(int N)
   }
 
   //invalidating all triangle vertices and edges
-  DebugLog<<"Invalidating triangle vertices and edges"<<endl;
+  DebugLog<<"Invalidating triangle vertices and edges"<<std::endl;
   for (int i=0;i<Vertices.size();i++)
     if (isPureTriangle[i])
       Vertices[i].Valid=false;
@@ -1206,7 +1204,7 @@ bool Mesh::SimplifyHexMesh(int N)
       Halfedge.Valid=false;
   
   //realigning faces
-  DebugLog<<"Realigning faces"<<endl;
+  DebugLog<<"Realigning faces"<<std::endl;
   Eigen::VectorXi visitedHE=Eigen::VectorXi::Zero(Halfedges.size());
   Eigen::VectorXi usedFace=Eigen::VectorXi::Zero(Faces.size());
   for (int i=0;i<Halfedges.size();i++){
@@ -1223,7 +1221,7 @@ bool Mesh::SimplifyHexMesh(int N)
     do{
       infinityCounter++;
       if (infinityCounter>Halfedges.size()){
-        DebugLog<<"Infinity loop in realigning faces on halfedge "<<i<<endl;
+          DebugLog<<"Infinity loop in realigning faces on halfedge "<<i<<std::endl;
         return false;
       }
       Halfedges[heiterate].AdjFace=currFace;
@@ -1232,7 +1230,7 @@ bool Mesh::SimplifyHexMesh(int N)
   }
   
   int countThree=0;
-  DebugLog<<"Invalidating remainder faces"<<endl;
+  DebugLog<<"Invalidating remainder faces"<<std::endl;
   for (int i=0;i<Faces.size();i++)
     if (!usedFace[i])
       Faces[i].Valid=false;
@@ -1240,7 +1238,7 @@ bool Mesh::SimplifyHexMesh(int N)
   
   //killing perfect ear faces (not doing corners atm)
   //counting valences
-  vector<int> Valences(Vertices.size());
+  std::vector<int> Valences(Vertices.size());
   for (int i=0;i<Vertices.size();i++)
     Valences[i]=0;
   
@@ -1252,7 +1250,7 @@ bool Mesh::SimplifyHexMesh(int N)
     }
   }
      
-  DebugLog<<"Invalidating ear (latent valence 2) faces"<<endl;
+  DebugLog<<"Invalidating ear (latent valence 2) faces"<<std::endl;
   for (int i=0;i<Faces.size();i++){
     if (!Faces[i].Valid)
       continue;
@@ -1265,8 +1263,8 @@ bool Mesh::SimplifyHexMesh(int N)
       heiterate=Halfedges[heiterate].Next;
     }while (heiterate!=hebegin);
     if (countThree<3){
-      DebugLog<<"Invalidating ear Face "<<i<<endl;
-      DebugLog<<"Its vertices are "<<endl;
+        DebugLog<<"Invalidating ear Face "<<i<<std::endl;
+        DebugLog<<"Its vertices are "<<std::endl;
       do{
         Halfedges[heiterate].Valid=false;
         if (Halfedges[heiterate].Twin!=-1)
@@ -1293,7 +1291,7 @@ bool Mesh::SimplifyHexMesh(int N)
     if ((Vertices[i].Valid)&&(Valences[i]<2))
       Vertices[i].Valid=false;
   
-  DebugLog<<"Starting unifying edges" <<endl;
+    DebugLog<<"Starting unifying edges" <<std::endl;
   for (int i=0;i<Vertices.size();i++){
     
     if ((Vertices[i].Valid)&&(Valences[i]<=2)&&(!isEar[i]))
