@@ -120,7 +120,7 @@ if (EXISTS ${CPF_DIR})
             ${CMAKE_CURRENT_SOURCE_DIR}/extern/gptoolbox-master/mex/fast_sparse.mexw64
             ${CPF_DIR}/external/fast_sparse/fast_sparse.mexw64
             )
-  else()
+  elseif(UNIX AND NOT APPLE) #LINUX
     add_custom_target(cpf_install
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_BINARY_DIR}/MeshCutter/MeshCutter_bin
@@ -145,6 +145,32 @@ if (EXISTS ${CPF_DIR})
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_SOURCE_DIR}/extern/gptoolbox-master/mex/fast_sparse.mexa64
             ${CPF_DIR}/external/fast_sparse/fast_sparse.mexa64
+            )
+   elseif(APPLE)
+     add_custom_target(cpf_install
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/MeshCutter/MeshCutter_bin
+            ${CPF_DIR}/external/MeshCutter/MeshCutter_bin
+
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/Mesher/Mesher_bin
+            ${CPF_DIR}/external/Mesher/Mesher_bin
+
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/Parameterization/Parameterization_bin
+            ${CPF_DIR}/external/Parameterization/Parameterization_bin
+
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/Dualizer/Dualizer_bin
+            ${CPF_DIR}/external/Dualizer/Dualizer_bin
+
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/Planarize/Planarize_bin
+            ${CPF_DIR}/external/Planarizer/Planarize_bin
+
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_SOURCE_DIR}/extern/gptoolbox-master/mex/fast_sparse.mexmaci64
+            ${CPF_DIR}/external/fast_sparse/fast_sparse.mexmaci64
             )
   endif()
 endif()
