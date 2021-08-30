@@ -47,10 +47,11 @@ if(NOT hasParent)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../extern/libhedra/include/ ${CMAKE_BINARY_DIR}/extern/libhedra)
 endif()
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "CYGWIN")
+  #used for matlab to avoid issues
+  set (CMAKE_EXE_LINKER_FLAGS -Wl,--copy-dt-needed-entries)
+endif()
 
-
-#used for matlab to avoid issues
-set (CMAKE_EXE_LINKER_FLAGS -Wl,--copy-dt-needed-entries)
 
 
 # Add your project files
